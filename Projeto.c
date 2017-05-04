@@ -24,6 +24,8 @@ void keyboard2(int key, int mouse_x, int mouse_y);
 
 enum {TRANSLATE = 0, SCALE, ROTATE} transformMode;
 
+GLuint texture_names[2];
+
 int get_int(char* header, unsigned int offset){
 	return (header[offset + 3]<<24)+
 			(header[offset + 2]<<16)+
@@ -62,20 +64,27 @@ unsigned char* load_bmp(char *file_name, int* width, int *height){
 		return data;
 }
 
-static void makeTexture(char *file_name){
+static void
+makeTexture(char *file_name){
+	
 	unsigned char *texture; 
 	int width, height;
 	
 	texture = load_bmp(file_name, &width, &height);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0,
-	      		0x80E0, GL_UNSIGNED_BYTE, texture);
-    free(texture);
+	
+	
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0,
+      0x80E0, GL_UNSIGNED_BYTE, texture);
+      
+      free(texture);
 }
 
 void init(void){
 	glEnable(GL_DEPTH_TEST);
   	glEnable(GL_TEXTURE_2D);
+  	
+  	transformMode = TRANSLATE;
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glClearColor(0,0,0,1.0);
@@ -85,18 +94,18 @@ void init(void){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();	
 	
-	
-	/*glBindTexture(GL_TEXTURE_2D, texture_names[0]);
-  makeTexture("test1.bmp");
+	glGenTextures(2, texture_names);
+	glBindTexture(GL_TEXTURE_2D, texture_names[0]);
+  	makeTexture("textura_da_superficie_1024x512.bmp");
 
-  glBindTexture(GL_TEXTURE_2D, texture_names[1]);
-  makeTexture("test2.bmp"); */
+  	glBindTexture(GL_TEXTURE_2D, texture_names[1]);
+  	makeTexture("altimetria_1024x512.bmp"); 
 	
 }
 
-void drawGrid(){
+void drawGrid(int tex_id){
 	
-	//glBindTexture(GL_TEXTURE_2D, texture_names[tex_id]);
+	glBindTexture(GL_TEXTURE_2D, texture_names[tex_id]);
 	
 	int N = 50; 	//Quantidade de linhas
 	float DZ = .1; //Passo ou esperssura
@@ -105,16 +114,18 @@ void drawGrid(){
 	glBegin(GL_QUADS);
 	for(i =0; i<N; i++){
 		for(j=0; j<N; j++){
-			//glBegin(GL_LINE_LOOP);
 			float x = i*DX;
 			float z = j*DZ;
 			float y = 0;	
 			float y_ = 0;
+			glTexCoord2f(0.0, 0.0); //Coordenada de Textura
 			glVertex3f(x, y, z);
+			glTexCoord2f(0.0, 1.0); //Coordenada de Textura
 			glVertex3f(x,y ,z +DZ);
+			glTexCoord2f(1.0, 1.0); //Coordenada de Textura
 			glVertex3f(x +DX, y_, z + DZ);
+			glTexCoord2f(1.0, 0.0); //Coordenada de Textura
 			glVertex3f(x+ DX, y_, z);
-			//glEnd();
 		}
 	}
 	glEnd();
@@ -126,7 +137,7 @@ void display(){
 	glPushMatrix();
 	glScalef(.5,.5,.5);
 	glRotatef(45, -1.0, 0.0, 0.0);
-	drawGrid();
+	drawGrid(0);
 	glPopMatrix();
 	glFlush();
 }
