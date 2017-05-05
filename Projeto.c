@@ -107,9 +107,9 @@ void drawGrid(int tex_id){
 	
 	glBindTexture(GL_TEXTURE_2D, texture_names[tex_id]);
 	
-	int N = 50; 	//Quantidade de linhas
-	float DZ = .1; //Passo ou esperssura
-	float DX = .1;
+	int N = 8; 	//Quantidade de linhas
+	float DZ = 1; //Passo ou esperssura
+	float DX = 1;
 	int i, j;
 	glBegin(GL_QUADS);
 	for(i =0; i<N; i++){
@@ -118,14 +118,14 @@ void drawGrid(int tex_id){
 			float z = j*DZ;
 			float y = 0;	
 			float y_ = 0;
-			glTexCoord2f(0.0, 0.0); //Coordenada de Textura
+			glTexCoord2f(x/N, z/N); //Coordenada de Textura
 			glVertex3f(x, y, z);
-			glTexCoord2f(0.0, 1.0); //Coordenada de Textura
+			glTexCoord2f(x/N, (z + DZ)/N); //Coordenada de Textura
 			glVertex3f(x,y ,z +DZ);
-			glTexCoord2f(1.0, 1.0); //Coordenada de Textura
+			glTexCoord2f((x +DX)/N, (z + DZ)/N); //Coordenada de Textura
 			glVertex3f(x +DX, y_, z + DZ);
-			glTexCoord2f(1.0, 0.0); //Coordenada de Textura
-			glVertex3f(x+ DX, y_, z);
+			glTexCoord2f((x +DX)/N, z /N); //Coordenada de Textura
+			glVertex3f(x +DX, y_, z);
 		}
 	}
 	glEnd();
