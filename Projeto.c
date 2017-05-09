@@ -114,15 +114,15 @@ static void makeTexture(char *file_name)
 	int width, height;
 	
 	texture = load_bmp(file_name,&width,&height);
-	/*
-	CARREGANDO ALTITUDE
-	*/
-	if(load==0){
+	if(load==1){
 		unsigned char *t = texture;
 		int i,j;
-		for(i=0;i<1024;i++){
-			for(j=0;j<512*3;j+=3){
-				altitude[i][j]=*t;
+		for(j=0;j<512;j++){
+			for(i=0;i<1024;i++){
+				if(i==200)
+					printf("%d ",*t);
+				altitude[i][j]=(*t);
+				//altitude[i][j/3]=20*sin(2*M_PI*(float)i/1023)+20*sin(2*M_PI*(float)j/(512*3));
 				t+=3;
 			}
 		}
@@ -142,23 +142,25 @@ void drawGrid(){
 	float Lx=WIDTH, Ly=HEIGTH;
 	int Nx = 1024;
 	int Ny = 512;
+	int p = 1;
 	float Dx=Lx/Nx, Dy=Ly/Ny;
 	
 	glBindTexture(GL_TEXTURE_2D,texture_names[1]);
 	glBegin(GL_QUADS);
-	for(i=0;i<=Nx-1;i++){
-		for(j=0;j<=Ny-1;j++){
-				glTexCoord2f(i*Dx/Lx,j*Dy/Ly);
-				glVertex3f(i*Dx-Lx/2,j*Dy-Ly/2,altitude[i][j]);
-				
-				glTexCoord2f(i*Dx/Lx,(j+1)*Dy/Ly);
-				glVertex3f(i*Dx-Lx/2,(j+1)*Dy-Ly/2,altitude[i][j+1]);
-				
-				glTexCoord2f((i+1)*Dx/Lx,(j+1)*Dy/Ly);
-				glVertex3f((i+1)*Dx-Lx/2,(j+1)*Dy-Ly/2,altitude[i+1][j+1]);
-				
-				glTexCoord2f((i+1)*Dx/Lx,j*Dy/Ly);
-				glVertex3f((i+1)*Dx-Lx/2,j*Dy-Ly/2,altitude[i+1][j]);
+	for(i=0;i<=Nx-1;i+=p){
+		for(j=0;j<=Ny-1;j+=p){
+			
+			glTexCoord2f(i*Dx/Lx,j*Dy/Ly);
+			glVertex3f(i*Dx-Lx/2,j*Dy-Ly/2,altitude[i][j]);
+			
+			glTexCoord2f(i*Dx/Lx,(j+p)*Dy/Ly);
+			glVertex3f(i*Dx-Lx/2,(j+p)*Dy-Ly/2,altitude[i][j+p]);
+			
+			glTexCoord2f((i+p)*Dx/Lx,(j+p)*Dy/Ly);
+			glVertex3f((i+p)*Dx-Lx/2,(j+p)*Dy-Ly/2,altitude[i+p][j+p]);
+			
+			glTexCoord2f((i+p)*Dx/Lx,j*Dy/Ly);
+			glVertex3f((i+p)*Dx-Lx/2,j*Dy-Ly/2,altitude[i+p][j]);
 		}
 	}
 	glEnd();
@@ -172,27 +174,37 @@ void init(){
 	glEnable(GL_TEXTURE_2D);
 	
 	glClearColor(0.0,0.0,0.0,1.0);
+	//glOrtho(0,WIDTH,0,HEIGTH,-1,1);
 	glMatrixMode(GL_PROJECTION);
-	gluPerspective(45.0,(float)WIDTH/(float)HEIGTH,100.0,10000.0);
+	gluPerspective(45.0,(float)WIDTH/(float)HEIGTH,100.0,1000.0);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glTranslated(0,0,-500);
+	glRotated(-30,1,0,0);
 	
 	glGenTextures(2, texture_names);
+	
+	glBindTexture(GL_TEXTURE_2D, texture_names[1]);
+	makeTexture("altimetria_1024x512.bmp");
+	
+	load++;
 	glBindTexture(GL_TEXTURE_2D, texture_names[0]);
 	makeTexture("altimetria_1024x512.bmp");
-	load++;
-	glBindTexture(GL_TEXTURE_2D, texture_names[1]);
-	makeTexture("textura_da_superficie_1024x512.bmp");
+	
+	int i,j;
+	for(i=0;i<1024;i++){
+		for(j=0;j<512;j+=1){
+			if(i==200)
+				printf("%d ",altitude[i][j]);
+		}
+	}
+	printf("\n");
 }
 
 void display(){
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	loadMatrix();
-	glPushMatrix();
-		glMatrixMode(GL_MODELVIEW);
-		glRotated(-30,1,0,0);
-		glTranslated(0,250,-350);
-		drawGrid();
-	glPopMatrix();
-	//glutWireTeapot(50.0f);
+	drawGrid();
 	glFlush();
 }
 
@@ -253,3 +265,4 @@ void keyboard2(unsigned char key, int mousex, int mousey){
 	}
 	glutPostRedisplay();
 }
+
