@@ -21,6 +21,7 @@ void init();
 void display();
 void keyboard(unsigned char key, int x, int y);
 void keyboard2(unsigned char key, int mousex, int mousey);
+void mouse(int button,int state, int mousex, int mousey);
 
 GLuint texture_names[2];
 int load = 0;
@@ -121,7 +122,7 @@ static void makeTexture(char *file_name)
 			for(i=0;i<1024;i++){
 				if(i==200)
 					printf("%d ",*t);
-				altitude[i][j]=(*t);
+				altitude[i][j]=(*t)/20;
 				//altitude[i][j/3]=20*sin(2*M_PI*(float)i/1023)+20*sin(2*M_PI*(float)j/(512*3));
 				t+=3;
 			}
@@ -136,6 +137,138 @@ static void makeTexture(char *file_name)
 /*
 ##################################################################
 */
+
+void drawWater(float diameter, int rdiv, int hdiv){
+	int i;
+	float delta =2*M_PI/rdiv;
+	float delta_h=diameter/hdiv;
+	float radius =diameter/2.0;
+	float d = diameter/2;
+	//Rings
+	int j; 
+	for(j=0; j<hdiv; j++){
+		float heigth = j*delta_h;
+		float heigth_ = (j+1)*delta_h;
+		float r = sqrt(radius*radius - (radius-heigth)*(radius-heigth));
+		float r_ = sqrt(radius*radius - (radius-heigth_)*(radius-heigth_));
+		for(i=0; i<rdiv;i++){
+			float theta =delta*i;
+			glBegin(GL_QUADS);
+				glColor3f(0.0f, 0.0f, 1.0f);
+				glVertex3f(cos(theta)*r, heigth-d, sin(theta)*r);
+				glVertex3f(cos(theta)*r_, heigth_-d, sin(theta)*r_);
+				glVertex3f(cos(theta +delta)*r_, heigth_-d, sin(theta+delta)*r_);
+				glVertex3f(cos(theta+delta)*r, heigth-d, sin(theta+delta)*r);
+			glEnd();
+		}
+	}
+}
+
+void scale(float *v, float factor){
+	v[0]=v[0]*factor;
+	v[1]=v[1]*factor;
+	v[2]=v[2]*factor;
+}
+
+void normalize(float *p){
+	float m = sqrt(p[0]*p[0]+p[1]*p[1]+p[2]*p[2]);
+	if(m==0)
+		return;
+	p[0]=p[0]/m;
+	p[1]=p[1]/m;
+	p[2]=p[2]/m;
+}
+
+void getCoords(float *v, float heigth, float theta, float diameter){
+	float radius = diameter/2.0;
+	float r = sqrt(radius*radius - (radius-heigth)*(radius-heigth));
+	v[0] = cos(theta)*r;
+	v[1] = heigth-diameter/2;
+	v[2] = sin(theta)*r;
+}
+
+void drawSphere(float diameter, int rdiv, int hdiv){
+	int i;
+	float delta =2*M_PI/rdiv;
+	float delta_h=diameter/hdiv;
+	float radius =diameter/2.0;
+	//Rings
+	int j; 
+	glBindTexture(GL_TEXTURE_2D,texture_names[1]);
+	for(j=0; j<hdiv; j++){
+		float heigth = j*delta_h;
+		float heigth_ = (j+1)*delta_h;
+		float r = sqrt(radius*radius - (radius-heigth)*(radius-heigth));
+		float r_ = sqrt(radius*radius - (radius-heigth_)*(radius-heigth_));
+		for(i=0; i<rdiv;i++){
+			float theta =delta*i;
+			float d = 0.0;
+			glBegin(GL_QUADS);
+				glTexCoord2f(theta/(2*M_PI),heigth/diameter);
+				//glVertex3f(cos(theta)*r, heigth-diameter/2, sin(theta)*r);
+				float p[3];
+				getCoords(p,heigth,theta,diameter);
+				normalize(p);
+				d = altitude[i*1023/(rdiv)][j*511/(hdiv)];
+				if(d<2){
+					d=2;
+					glColor3f(0.0,0.0,1.0);
+				}
+				else{
+					glColor3f(1.0,1.0,1.0);
+				}
+				scale(p,diameter+d);
+				glVertex3f(p[0],p[1],p[2]);
+				
+				glTexCoord2f(theta/(2*M_PI),heigth_/diameter);
+				//glVertex3f(cos(theta)*r_, heigth_-diameter/2, sin(theta)*r_);
+				getCoords(p,heigth_,theta,diameter);
+				normalize(p);
+				d = altitude[i*1023/(rdiv)][(j+1)*511/(hdiv)];
+				if(d<2){
+					d=2;
+					glColor3f(0.0,0.0,1.0);
+				}
+				else{
+					glColor3f(1.0,1.0,1.0);
+				}
+				scale(p,diameter+d);
+				glVertex3f(p[0],p[1],p[2]);
+				
+				glTexCoord2f((theta+delta)/(2*M_PI),heigth_/diameter);
+				//glVertex3f(cos(theta +delta)*r_, heigth_-diameter/2, sin(theta+delta)*r_);
+				getCoords(p,heigth_, theta +delta, diameter);
+				normalize(p);
+				d = altitude[(i+1)*1023/(rdiv)][(j+1)*511/(hdiv)];
+				if(d<2){
+					d=2;
+					glColor3f(0.0,0.0,1.0);
+				}
+				else{
+					glColor3f(1.0,1.0,1.0);
+				}
+				scale(p,diameter+d);
+				glVertex3f(p[0],p[1],p[2]);
+				
+				glTexCoord2f((theta+delta)/(2*M_PI),heigth/diameter);
+				//glVertex3f(cos(theta+delta)*r, heigth-diameter/2, sin(theta+delta)*r);
+				getCoords(p,heigth, theta + delta, diameter);
+				normalize(p);
+				d = altitude[(i+1)*1023/(rdiv)][j*511/(hdiv)];
+				if(d<2){
+					d=2;
+					glColor3f(0.0,0.0,1.0);
+				}
+				else{
+					glColor3f(1.0,1.0,1.0);
+				}
+				scale(p,diameter+d);
+				glVertex3f(p[0],p[1],p[2]);
+			glEnd();
+		}
+	}
+	
+}
 
 void drawGrid(){
 	int i,j;
@@ -176,16 +309,16 @@ void init(){
 	glClearColor(0.0,0.0,0.0,1.0);
 	//glOrtho(0,WIDTH,0,HEIGTH,-1,1);
 	glMatrixMode(GL_PROJECTION);
-	gluPerspective(45.0,(float)WIDTH/(float)HEIGTH,100.0,1000.0);
+	gluPerspective(45.0,(float)WIDTH/(float)HEIGTH,1.0,1000.0);
 	
 	glMatrixMode(GL_MODELVIEW);
-	glTranslated(0,0,-500);
+	glTranslated(0,0,-850);
 	glRotated(-30,1,0,0);
 	
 	glGenTextures(2, texture_names);
 	
 	glBindTexture(GL_TEXTURE_2D, texture_names[1]);
-	makeTexture("altimetria_1024x512.bmp");
+	makeTexture("textura_da_superficie_1024x512.bmp");
 	
 	load++;
 	glBindTexture(GL_TEXTURE_2D, texture_names[0]);
@@ -203,9 +336,14 @@ void init(){
 
 void display(){
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	loadMatrix();
-	drawGrid();
+	//loadMatrix();
+	//drawGrid();
+	glColor3f(1.0,1.0,1.0);
+	drawSphere(300,200,200);
+	//drawWater(2*303,200,200);
 	glFlush();
+	glRotated(1.0,0,0,1);
+	glutPostRedisplay();
 }
 
 void keyboard(unsigned char key, int x, int y){
@@ -265,4 +403,3 @@ void keyboard2(unsigned char key, int mousex, int mousey){
 	}
 	glutPostRedisplay();
 }
-
