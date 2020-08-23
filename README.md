@@ -4,7 +4,7 @@ Linear algebra has wide application in the field of engineering and computer sci
 
 [OpenGL](https://www.opengl.org/) and GLUT Utility Toolkit
 
-The idea is to apply the texture and altimetry of the planet Mars 🟤 (available at \ textit {http://planetpixelemporium.com/mars.html}) in a sphere. For this, knowledge of linear algebra is needed, specifically transformations and geometry.
+The idea is to apply the texture and altimetry of the planet Mars 🟤 (available at [here](http://planetpixelemporium.com/mars.html) ) in a sphere. For this, knowledge of linear algebra is needed, specifically transformations and geometry.
 
     I. Texture
     
@@ -17,6 +17,6 @@ The idea is to apply the texture and altimetry of the planet Mars 🟤 (availabl
    
     III. Modeling
     
-    ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/e2.png)
+   ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/e2.png)
 
 [Result](https://www.youtube.com/watch?v=VKxlAa5HHTw)
