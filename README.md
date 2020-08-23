@@ -1,9 +1,11 @@
-Computer Graphics
+# Computer Graphics: Scene processing and texturing 
 
-Scene processing and texturing 
+Linear algebra has wide application in the field of engineering and computer science. Here is described the graphic process of texturing objects. You will need: 
 
-You will need: 
+[OpenGL](https://www.opengl.org/) and GLUT Utility Toolkit
 
-OpenGL - https://www.opengl.org/ and GLUT Utility Toolkit
+[Result](https://www.youtube.com/watch?v=VKxlAa5HHTw)
 
-Result: https://www.youtube.com/watch?v=VKxlAa5HHTw
+    I. Texture
+    
+![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/f2.png)
