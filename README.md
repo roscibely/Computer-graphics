@@ -8,9 +8,9 @@ Linear algebra has wide application in the field of engineering and computer sci
 
     I. Texture
     
-    ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/f1.jpg)
+   ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/f1.jpg)
 
 
     II. Altimetry
     
-    ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/f2.png)
+   ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/f2.png)
