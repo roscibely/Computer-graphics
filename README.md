@@ -19,13 +19,14 @@ The idea is to apply the texture and altimetry of the planet Mars 🟤 (availabl
        
    ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/e2.png)
    
-   The sphere radius can be written as a function of the circle radius formed by a section $ R $, and the distance between the plane of the section and the center of the sphere $ R-h $,
+   The sphere radius can be written as a function of the circle radius formed by a section $ R $, and the distance between the plane of the section and the center of the sphere R-h,
    
+   ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/eq1.gif)
     $$r = \sqrt{R^2 - (R- h)^2}.$$
    
-    2D radius coordinates are given by,   
-    $$x = cos(\theta)r, \quad y = \frac{h-D}{2}, \quad z = sin(\theta)r,$$
-
+  2D radius coordinates are given by,   
+ 
+   $$x = cos(\theta)r, \quad y = \frac{h-D}{2}, \quad z = sin(\theta)r,$$
     IV. Final result 
     
    ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/proj4.png)
