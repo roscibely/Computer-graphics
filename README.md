@@ -19,7 +19,7 @@ The idea is to apply the texture and altimetry of the planet Mars 🟤 (availabl
        
    ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/e2.png)
    
-   The sphere radius can be written as a function of the circle radius formed by a section $ R $, and the distance between the plane of the section and the center of the sphere R-h,
+   The sphere radius can be written as a function of the circle radius formed by a section R, and the distance between the plane of the section and the center of the sphere R-h,
    
    ![Figure](https://github.com/roscibely/Computer-graphics/blob/master/figures/eq1.gif)
 
